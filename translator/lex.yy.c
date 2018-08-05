@@ -520,13 +520,14 @@ char *yytext;
 #include "grammar.tab.h" //Bison generated header file
 
 extern YYSTYPE yylval;
-int identifier;
+int cpropid=0;
+int ppropid=0;
 int maxinstant=1;
 int line=0;
 
 int yyparse (void);
 
-#line 530 "lex.yy.c"
+#line 531 "lex.yy.c"
 
 #define INITIAL 0
 #define comment 1
@@ -709,10 +710,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 19 "lexer.l"
+#line 20 "lexer.l"
 
 
-#line 716 "lex.yy.c"
+#line 717 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -797,58 +798,58 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 21 "lexer.l"
+#line 22 "lexer.l"
 BEGIN(comment);
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 22 "lexer.l"
+#line 23 "lexer.l"
 //Eats comments
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 23 "lexer.l"
+#line 24 "lexer.l"
 { line++; BEGIN(INITIAL); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 25 "lexer.l"
+#line 26 "lexer.l"
 return CAUSESONEOF;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 26 "lexer.l"
+#line 27 "lexer.l"
 return INITIALLYONEOF;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 27 "lexer.l"
+#line 28 "lexer.l"
 return PERFORMEDAT;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 28 "lexer.l"
+#line 29 "lexer.l"
 return TAKESVALUES;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 29 "lexer.l"
+#line 30 "lexer.l"
 return WITHPROB;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "lexer.l"
+#line 31 "lexer.l"
 return IFHOLDS;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "lexer.l"
+#line 32 "lexer.l"
 return *yytext;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 33 "lexer.l"
+#line 34 "lexer.l"
 {
 							yylval.int_val = atoi(yytext);
 
@@ -861,7 +862,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "lexer.l"
+#line 44 "lexer.l"
 {
 						yylval.string = strdup(yytext);
 
@@ -870,18 +871,23 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 49 "lexer.l"
+#line 50 "lexer.l"
 {
 							char *aux;
 							int i=0;
 
-							aux=malloc(sizeof(char)*(6+strlen(yytext)));
-							sprintf(aux, "frac(%s)", yytext);
+							aux=malloc(sizeof(char)*(4+strlen(yytext)));
+							sprintf(aux, "(/ %s)", yytext);
 
 							while (aux[i] != '/')
 								i++;
 
-							aux[i] = ',';
+							i++;
+
+							while (aux[i] != '/')
+								i++;
+
+							aux[i] = ' ';
 
 							yylval.string = strdup(aux);
 
@@ -892,21 +898,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 68 "lexer.l"
+#line 74 "lexer.l"
 ;
 	YY_BREAK
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 69 "lexer.l"
+#line 75 "lexer.l"
 line++;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 71 "lexer.l"
+#line 77 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 910 "lex.yy.c"
+#line 916 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(comment):
 	yyterminate();
@@ -1904,16 +1910,22 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 71 "lexer.l"
+#line 77 "lexer.l"
 
 
 
 void yyerror (char *string) { printf("LEXER ERROR ON LINE %d: %s.\n",line,string ); }
 
 int main ( void ) {
+	// Preamble
+	printf("(def domain-language {})\n");
+	printf("(def domain-description {})\n");
+	printf("(alter-var-root #\'domain-description #(assoc-in %% [:cprops] []))\n");
+	printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops] []))\n");
+
 	yyparse();
 
-	printf("\n#const maxinstant=%d.\n", maxinstant+1);
+	printf("(alter-var-root #\'domain-language #(assoc %% :maxinst %d))\n", maxinstant+1);
 
 	return 0;
 }

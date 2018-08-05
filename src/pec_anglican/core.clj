@@ -2,7 +2,6 @@
   (:require
             [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]]
-            [anglican runtime emit]
             [pec-anglican.hprop :as hprop])
   (:gen-class))
 
@@ -71,8 +70,10 @@
   (let [{:keys [domain-file options exit-message ok?]} (validate-args args)
         query-file (:query options)]
 
-        (load-file domain-file)
+        (println "Loading domain and query...")
+        (time (load-file domain-file))
         (load-file query-file)
+        (print "\n")
 
         ; Exits displaying error message if needed
         (if exit-message
@@ -85,11 +86,11 @@
 
               ; Outputs summary
               (println
-                (format (str ";; Domain: %s\n"
+                (format (str "Running program on following parameters:\n"
+                  ";; Domain: %s\n"
                   ;";; Inference algorithm: %s %s\n"
                   ";; Query: %s\n"
                   ";; Number of samples: %s")
                     domain-file query-file number-of-samples))
 
-              (println (hprop/perform-inference domain-language domain-description i-formula number-of-samples)))
-              ))
+              (println (hprop/perform-inference domain-language domain-description i-formula number-of-samples)))))

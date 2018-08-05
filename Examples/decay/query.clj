@@ -1,3 +1,3 @@
 ; Encoding of i-formula
 (anglican.emit/defm i-formula [w]
-  (= "active" (:tuberculosis (nth w 50))))
+  (= "true" (:f (nth w 15))))

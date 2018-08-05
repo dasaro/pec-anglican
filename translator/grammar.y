@@ -7,7 +7,8 @@
 
 int yylex(void);
 void yyerror (char *);
-extern int identifier;
+extern int cpropid;
+extern int ppropid;
 
 %}
 
@@ -57,7 +58,7 @@ instant:
 prob:
 	'1' {
 		$$ = (char *)malloc(9*sizeof(char));
-		sprintf($$, "frac(1,1)");
+		sprintf($$, "1");
 	}
 	|
 	FRACTION {
@@ -97,13 +98,13 @@ statement:
 
 takesvalues:
 	OBJECT TAKESVALUES '{' list_objects '}' {
-												printf("fluent(%s). ",$1);
+												printf("(alter-var-root #\'domain-language #(assoc %% :fluents (conj (:fluents domain-language) :%s)))\n",$1);
 
-												for (int i=0; i<$4.used; i++) {
-													printf("possVal(%s, %s). ", $1, $4.array[i] );
-												}
-
-												printf("\n");
+												// Don't care about values fluents may take
+												//for (int i=0; i<$4.used; i++) {
+												//	printf("possVal(%s, %s). ", $1, $4.array[i] );
+												//}
+												//printf("\n");
 											}
 ;
 
@@ -114,65 +115,107 @@ performed:
 performed_full_form:
 	OBJECT PERFORMEDAT instant WITHPROB prob IFHOLDS '{' nonempty_list_assignments '}'
 	{
-		printf("performed(%s, %d, %s) :-\n", $1, $3, $5);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :subject] :%s))\n", ppropid, $1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :instant] %d))\n", ppropid, $3);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"true\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) %s))))\n",ppropid,ppropid,$5);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"false\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) (- 1 %s)))))\n",ppropid,ppropid,$5);
+
+		// PRECONDITION
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :precondition] (fn [state] (and ", ppropid);
 
 		for (int i=0; i<$8.used; i++) {
-			printf("\tholds( (%s,%d) )",$8.array[i],$3);
-
-			if (i<$8.used-1)
-				printf(",\n");
-			else
-				printf(".\n\n");
+			printf("(= (list (get-in state (keys %s))) (vals %s)) ", $8.array[i], $8.array[i]);
 		}
+		printf("))))\n");
+
+		ppropid++;
 	}
 ;
 
 performed_shorthand1:
-	OBJECT PERFORMEDAT instant WITHPROB prob { printf("performed(%s, %d, %s).\n", $1, $3, $5); }
+	OBJECT PERFORMEDAT instant WITHPROB prob {
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :subject] :%s))\n", ppropid, $1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :instant] %d))\n", ppropid, $3);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"true\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) %s))))\n",ppropid,ppropid,$5);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"false\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) (- 1 %s)))))\n",ppropid,ppropid,$5);
+
+		// PRECONDITION
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :precondition] (fn [state] true)))\n",ppropid);
+
+		ppropid++;
+	}
 ;
 
 performed_shorthand2:
 	OBJECT PERFORMEDAT instant IFHOLDS '{' nonempty_list_assignments '}' {
-		printf("performed(%s, %d, frac(1,1)) :-\n", $1, $3);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :subject] :%s))\n", ppropid, $1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :instant] %d))\n", ppropid, $3);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"true\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) 1))))\n",ppropid,ppropid);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"false\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) 0))))\n",ppropid,ppropid);
+
+		// PRECONDITION
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :precondition] (fn [state] (and ", ppropid);
 
 		for (int i=0; i<$6.used; i++) {
-			printf("\tholds( (%s,I) )",$6.array[i]);
-
-			if (i<$6.used-1)
-				printf(",\n");
-			else
-				printf(".\n\n");
+			printf("(= (list (get-in state (keys %s))) (vals %s)) ", $6.array[i], $6.array[i]);
 		}
+		printf("))))\n");
+
+		ppropid++;
 	}
 ;
 
 performed_shorthand3:
-	OBJECT PERFORMEDAT instant { printf("performed(%s, %d, frac(1,1)).\n", $1, $3); }
+	OBJECT PERFORMEDAT instant {
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :subject] :%s))\n", ppropid, $1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :instant] %d))\n", ppropid, $3);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"true\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) 1))))\n",ppropid,ppropid);
+
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :outcomes] (vec (conj (get-in %% [:pprops %d :outcomes]) {:%s \"false\"}))))\n",ppropid,ppropid,$1);
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :probs] (vec (conj (get-in %% [:pprops %d :probs]) 0))))\n",ppropid,ppropid);
+
+		// PRECONDITION
+		printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops %d :precondition] (fn [state] true)))\n",ppropid);
+
+		ppropid++;
+	}
 ;
 
 causes:
 	'{' nonempty_list_assignments '}' CAUSESONEOF '{' list_pairs '}'
 									{
+
+									//PRECONDITION
+									printf("(alter-var-root #\'domain-description #(assoc-in %% [:cprops %d :precondition] (fn [state] (and ", cpropid);
+									for (int k=0; k<$2.used; k++) {
+										printf("(= (list (get-in state (keys %s))) (vals %s)) ", $2.array[k], $2.array[k]);
+									}
+									printf("))))\n");
+
 										for (int i=0; i<$6.used; i++) {
-
 												for (int j=0; j<$6.array[i].used; j++) {
-													printf("belongsTo(%s, id%d).\n",$6.array[i].array[j],identifier);
+													printf("(alter-var-root #\'domain-description #(assoc-in %% [:cprops %d :outcomes] (vec (conj (get-in %% [:cprops %d :outcomes]) %s))))\n",cpropid,cpropid,$6.array[i].array[j]);
 												}
 
-												printf("causedOutcome( (id%d, %s), I) :-\n", identifier, $6.array[i].probability);
+												printf("(alter-var-root #\'domain-description #(assoc-in %% [:cprops %d :probs] (vec (conj (get-in %% [:cprops %d :probs]) %s))))\n", cpropid, cpropid, $6.array[i].probability);
 
-												for (int k=0; k<$2.used; k++) {
-													printf("\tholds( (%s,I) )",$2.array[k]);
-
-													if (k<$2.used-1)
-														printf(",\n");
-													else
-														printf(".\n\n");
-												}
-
-												identifier++;
 										}
 
+										cpropid++;
 									}
 ;
 
@@ -181,12 +224,10 @@ initially:
 										for (int i=0; i<$3.used; i++) {
 
 											for (int j=0; j<$3.array[i].used; j++) {
-												printf("belongsTo(%s, id%d).\n",$3.array[i].array[j], identifier);
+												printf("(alter-var-root #\'domain-description #(assoc-in %% [:iprop :outcomes] (vec (conj (get-in %% [:iprop :outcomes]) %s))))\n",$3.array[i].array[j]);
 											}
 
-											printf("initialCondition( (id%d, %s) ).\n\n", identifier,$3.array[i].probability);
-
-											identifier++;
+											printf("(alter-var-root #\'domain-description #(assoc-in %% [:iprop :probs] (vec (conj (get-in %% [:iprop :probs]) %s))))\n", $3.array[i].probability);
 										}
 									}
 ;
@@ -207,6 +248,11 @@ pair:
 list_assignments:
 	/* empty */	{
 								initArray(&$$,0);
+								char *aux;
+								aux = (char *) malloc(sizeof(char) * 2);
+								sprintf(aux, "{}");
+								insertArray(&$$,strdup(aux));
+								free(aux);
 							}
 	|
 	nonempty_list_assignments	{
@@ -229,8 +275,8 @@ nonempty_list_assignments:
 assignment:
 	OBJECT '=' OBJECT	{
 							char *aux;
-							aux = (char *) malloc(sizeof(char) * (strlen($1) + strlen($3) + 3));
-							sprintf(aux, "(%s,%s)", $1, $3);
+							aux = (char *) malloc(sizeof(char) * (strlen($1) + strlen($3) + 6));
+							sprintf(aux, "{:%s \"%s\"}", $1, $3);
 							$$ = strdup(aux);
 							free(aux);
 						}

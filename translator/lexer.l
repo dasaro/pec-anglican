@@ -6,7 +6,8 @@
 #include "grammar.tab.h" //Bison generated header file
 
 extern YYSTYPE yylval;
-int identifier;
+int cpropid=0;
+int ppropid=0;
 int maxinstant=1;
 int line=0;
 
@@ -50,13 +51,18 @@ if-holds			return IFHOLDS;
 							char *aux;
 							int i=0;
 
-							aux=malloc(sizeof(char)*(6+strlen(yytext)));
-							sprintf(aux, "frac(%s)", yytext);
+							aux=malloc(sizeof(char)*(4+strlen(yytext)));
+							sprintf(aux, "(/ %s)", yytext);
 
 							while (aux[i] != '/')
 								i++;
 
-							aux[i] = ',';
+							i++;
+
+							while (aux[i] != '/')
+								i++;
+
+							aux[i] = ' ';
 
 							yylval.string = strdup(aux);
 
@@ -73,9 +79,15 @@ if-holds			return IFHOLDS;
 void yyerror (char *string) { printf("LEXER ERROR ON LINE %d: %s.\n",line,string ); }
 
 int main ( void ) {
+	// Preamble
+	printf("(def domain-language {})\n");
+	printf("(def domain-description {})\n");
+	printf("(alter-var-root #\'domain-description #(assoc-in %% [:cprops] []))\n");
+	printf("(alter-var-root #\'domain-description #(assoc-in %% [:pprops] []))\n");
+
 	yyparse();
 
-	printf("\n#const maxinstant=%d.\n", maxinstant+1);
+	printf("(alter-var-root #\'domain-language #(assoc %% :maxinst %d))\n", maxinstant+1);
 
 	return 0;
 }

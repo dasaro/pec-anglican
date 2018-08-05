@@ -10,10 +10,9 @@
 
 ; Returns true if iformula holds, false otherwise
 (with-primitive-procedures [generate-world]
-  (defquery hprop
-    [domain-language domain-description i-formula]
-    (let [w (generate-world domain-language domain-description)]
-      (i-formula w))))
+  (defquery hprop [domain-language domain-description i-formula]
+      (let [w (generate-world domain-language domain-description)]
+        (i-formula w))))
 
 (defn perform-inference
   [domain-language domain-description i-formula number-of-samples]

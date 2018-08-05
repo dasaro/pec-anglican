@@ -32,7 +32,7 @@ int addSymbol(char *name, char type) {
 	// %
 	// OUTPUT:
 	// TRUE if symbol was added
-	// FALSE otherwise
+	// ERR otherwise
 	if ( symbolCount<MAX_SYMBOLS ) {
 		// Sets up symbol name
 		table[symbolCount].name = (char*) malloc( strlen(name)*sizeof(char) );
@@ -50,7 +50,7 @@ int addSymbol(char *name, char type) {
 		return TRUE;
 	}
 	else {
-		return FALSE;
+		return ERR;
 	}
 }
 
@@ -78,7 +78,7 @@ int isPossibleValue(int pos, char *value) {
 
 int addValue(int pos, char *new_value) {
 	// INPUT:
-	// Position in the Symbol Table
+	// Position in Symbol Table
 	// %
 	// OUTPUT:
 	// Adds value and returns TRUE if position is valid
@@ -94,11 +94,26 @@ int addValue(int pos, char *new_value) {
 
 		// Updates number of values
 		*values_count = (*values_count)+1;
-
 		return TRUE;
 	}
 	else
-		return FALSE;
+		return ERR;
+}
+
+char getType(int pos) {
+	// INPUT:
+	// Position in Symbol Table
+	// %
+	// OUTPUT:
+	// Type (char) if pos is valid
+	// ERR if position is not valid
+	if (isValidPosition(pos)) {
+		return table[pos].type;
+	}
+	else
+	{
+		return ERR;
+	}
 }
 
 // int main() {
@@ -119,6 +134,9 @@ int addValue(int pos, char *new_value) {
 // 	printf("Is absent a possible value for tuberculosis?: %d\n", isPossibleValue(pos,"absent"));
 // 	printf("Is Active a possible value for tuberculosis?: %d\n", isPossibleValue(pos,"Active"));
 // 	printf("Is latent a possible value for xxx?: %d\n", isPossibleValue(lookup("xxx"),"latent"));
+// 	printf("What is the type of exposure?: %c\n", getType(lookup("exposure")));
+// 	printf("What is the type of tuberculosis?: %c\n", getType(lookup("tuberculosis")));
+// 	printf("What is the type of xxx?: %c\n", getType(lookup("xxx")));
 //
 // 	return 0;
 // }
