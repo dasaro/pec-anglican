@@ -37,4 +37,12 @@ int isPossibleValue(int, char *);
 //   It does nothing and returns FALSE otherwise
 int addValue(int, char *);
 
+int isValidPosition(int);
+
+char getType(int pos);
+
+char *getName(int pos);
+
+int setType(int, char);
+
 #endif

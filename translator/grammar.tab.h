@@ -45,9 +45,12 @@
      TAKESVALUES = 261,
      WITHPROB = 262,
      IFHOLDS = 263,
-     OBJECT = 264,
-     FRACTION = 265,
-     INTEGER = 266
+     HOLDSWITHPROB = 264,
+     CONDITIONEDON = 265,
+     VARIABLE = 266,
+     OBJECT = 267,
+     FRACTION = 268,
+     INTEGER = 269
    };
 #endif
 /* Tokens.  */
@@ -57,16 +60,19 @@
 #define TAKESVALUES 261
 #define WITHPROB 262
 #define IFHOLDS 263
-#define OBJECT 264
-#define FRACTION 265
-#define INTEGER 266
+#define HOLDSWITHPROB 264
+#define CONDITIONEDON 265
+#define VARIABLE 266
+#define OBJECT 267
+#define FRACTION 268
+#define INTEGER 269
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 33 "grammar.y"
+#line 37 "grammar.y"
 {
 	TwoDimensionalArray pairs_array;
 	Array string_array;
@@ -75,7 +81,7 @@ typedef union YYSTYPE
 	char *string;
 }
 /* Line 1529 of yacc.c.  */
-#line 79 "grammar.tab.h"
+#line 85 "grammar.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

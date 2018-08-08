@@ -116,6 +116,27 @@ char getType(int pos) {
 	}
 }
 
+char *getName(int pos) {
+	if (isValidPosition(pos)) {
+		return table[pos].name;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+int setType(int pos, char newType) {
+	if (isValidPosition(pos)) {
+		table[pos].type = newType;
+		return TRUE;
+	}
+	else
+	{
+		return ERR;
+	}
+}
+
 // int main() {
 // 	int pos;
 //

@@ -82,6 +82,7 @@
         (let [domain-language @(resolve 'domain-language)
               domain-description @(resolve 'domain-description)
               i-formula @(resolve 'i-formula)
+              conditioning-i-formula @(resolve 'conditioning-i-formula)
               number-of-samples (:number-of-samples options)]
 
               ; Outputs summary
@@ -93,4 +94,4 @@
                   ";; Number of samples: %s")
                     domain-file query-file number-of-samples))
 
-              (println (hprop/perform-inference domain-language domain-description i-formula number-of-samples)))))
+              (println (hprop/perform-inference domain-language domain-description i-formula conditioning-i-formula number-of-samples)))))
