@@ -1,0 +1,4 @@
+./translator/linux_bin/translator < Examples/antibiotic/antibiotic.pec > Examples/antibiotic/antibiotic.clj
+./translator/linux_bin/translator < Examples/antibiotic/query.pec > Examples/antibiotic/query.clj
+lein run Examples/antibiotic/antibiotic.clj -q Examples/antibiotic/query.clj
+

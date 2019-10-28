@@ -1,0 +1,147 @@
+// AVATEA
+// Preliminary experiments
+// 
+// +----------------+
+// | Experiment n.7 |
+// +----------------+
+// Activities to detect:
+engagement takes-values {true, false}
+taskCorrect takes-values {true, false}
+// The subject is thought to be initially engaged
+// and carrying out the task correctly:
+initially-one-of { ({engagement=true,taskCorrect=true},1/1) }
+// Activities received from the classifier are:
+// 1. (Camera ->) Eyes not following target
+// 2. (EEG ->) Low level of attention
+// 3. (Motion sensor & Camera ->) Bad posture
+{ eyesNotFollowingTarget=false, lowAttention=false, badPosture=false }
+    causes-one-of
+        { ({taskCorrect=true,engagement=true},4/10),
+         ({},6/10) }
+{ eyesNotFollowingTarget=true, lowAttention=false, badPosture=false, engagement=true }
+    causes-one-of
+        { ({taskCorrect=false,engagement=false},3/100),
+         ({taskCorrect=false},17/100),
+         ({},8/10) }
+{ eyesNotFollowingTarget=true, lowAttention=false, badPosture=false, engagement=false }
+ causes-one-of
+ { ({taskCorrect=false},3/10),
+  ({},7/10) }
+{ eyesNotFollowingTarget=false, lowAttention=true, badPosture=false }
+ causes-one-of
+ { ({engagement=false},3/10),
+  ({},7/10) }
+{ eyesNotFollowingTarget=true, lowAttention=true, badPosture=false }
+ causes-one-of
+ { ({taskCorrect=false,engagement=false},4/10),
+  ({},6/10) }
+{ eyesNotFollowingTarget=false, lowAttention=false, badPosture=true }
+ causes-one-of
+ { ({taskCorrect=false,engagement=false},3/100),
+      ({taskCorrect=false},17/100),
+  ({},8/10) }
+{ eyesNotFollowingTarget=true, lowAttention=false, badPosture=true }
+ causes-one-of
+ { ({taskCorrect=false,engagement=false},1/10),
+      ({taskCorrect=false},3/10),
+  ({},6/10) }
+{ eyesNotFollowingTarget=true, lowAttention=true, badPosture=true }
+ causes-one-of
+ { ({taskCorrect=false,engagement=false},3/10),
+      ({taskCorrect=false},2/10),
+  ({},5/10) }
+
+// Sequence of events:
+lowAttention	performed-at	0	with-prob	 4022/4211
+lowAttention	performed-at	1	with-prob	 4009/5525
+lowAttention	performed-at	2	with-prob	 7086/9691
+lowAttention	performed-at	3	with-prob	 5248/7885
+lowAttention	performed-at	4	with-prob	 4497/7786
+lowAttention	performed-at	5	with-prob	 538/2359
+lowAttention	performed-at	6	with-prob	 1141/3810
+lowAttention	performed-at	7	with-prob	 2123/6089
+lowAttention	performed-at	8	with-prob	 4273/8352
+lowAttention	performed-at	9	with-prob	 2693/9284
+lowAttention	performed-at	10	with-prob	 1148/9861
+lowAttention	performed-at	11	with-prob	 2081/9368
+lowAttention	performed-at	12	with-prob	 2047/5895
+lowAttention	performed-at	13	with-prob	 1828/9925
+lowAttention	performed-at	14	with-prob	 165/668 
+lowAttention	performed-at	15	with-prob	 1945/5751
+lowAttention	performed-at	16	with-prob	 1907/8946
+lowAttention	performed-at	17	with-prob	 2338/8203
+lowAttention	performed-at	18	with-prob	 2921/9836
+lowAttention	performed-at	19	with-prob	 109/521 
+lowAttention	performed-at	20	with-prob	 582/5657
+lowAttention	performed-at	21	with-prob	 1142/5569
+lowAttention	performed-at	22	with-prob	 725/6292
+lowAttention	performed-at	23	with-prob	 707/8553
+lowAttention	performed-at	24	with-prob	 1781/9253
+lowAttention	performed-at	25	with-prob	 53/262 
+lowAttention	performed-at	26	with-prob	 2875/9413
+lowAttention	performed-at	27	with-prob	 1/1000
+lowAttention	performed-at	28	with-prob	 11/7668
+lowAttention	performed-at	29	with-prob	 670/4413
+				
+badPosture	performed-at	0	with-prob	 965/4762
+badPosture	performed-at	1	with-prob	 2111/6446
+badPosture	performed-at	2	with-prob	 1415/6422
+badPosture	performed-at	3	with-prob	 930/2113
+badPosture	performed-at	4	with-prob	 278/485 
+badPosture	performed-at	5	with-prob	 906/1253
+badPosture	performed-at	6	with-prob	 3065/5079
+badPosture	performed-at	7	with-prob	 887/4276
+badPosture	performed-at	8	with-prob	 839/2100
+badPosture	performed-at	9	with-prob	 30/7591
+badPosture	performed-at	10	with-prob	 809/5501
+badPosture	performed-at	11	with-prob	 1361/6614
+badPosture	performed-at	12	with-prob	 1/1000
+badPosture	performed-at	13	with-prob	 223/1179
+badPosture	performed-at	14	with-prob	 1/1000
+badPosture	performed-at	15	with-prob	 1/1000
+badPosture	performed-at	16	with-prob	 1/1000
+badPosture	performed-at	17	with-prob	 1028/5349
+badPosture	performed-at	18	with-prob	 369/8839
+badPosture	performed-at	19	with-prob	 1/1000
+badPosture	performed-at	20	with-prob	 1/1000
+badPosture	performed-at	21	with-prob	 1/1000
+badPosture	performed-at	22	with-prob	 1/1000
+badPosture	performed-at	23	with-prob	 1/1000
+badPosture	performed-at	24	with-prob	 1/1000
+badPosture	performed-at	25	with-prob	 349/9541
+badPosture	performed-at	26	with-prob	 838/6207
+badPosture	performed-at	27	with-prob	 1/1000
+badPosture	performed-at	28	with-prob	 105/2204
+badPosture	performed-at	29	with-prob	 1/1000
+				
+eyesNotFollowingTarget	performed-at	0	with-prob	 1460/8619
+eyesNotFollowingTarget	performed-at	1	with-prob	 488/2325
+eyesNotFollowingTarget	performed-at	2	with-prob	 261/2527
+eyesNotFollowingTarget	performed-at	3	with-prob	 67/510 
+eyesNotFollowingTarget	performed-at	4	with-prob	 918/6347
+eyesNotFollowingTarget	performed-at	5	with-prob	 794/5337
+eyesNotFollowingTarget	performed-at	6	with-prob	 229/8133
+eyesNotFollowingTarget	performed-at	7	with-prob	 999/1000
+eyesNotFollowingTarget	performed-at	8	with-prob	 999/1000
+eyesNotFollowingTarget	performed-at	9	with-prob	 1609/1825
+eyesNotFollowingTarget	performed-at	10	with-prob	 4681/9237
+eyesNotFollowingTarget	performed-at	11	with-prob	 2983/3616
+eyesNotFollowingTarget	performed-at	12	with-prob	 4048/8297
+eyesNotFollowingTarget	performed-at	13	with-prob	 3799/9355
+eyesNotFollowingTarget	performed-at	14	with-prob	 3528/9617
+eyesNotFollowingTarget	performed-at	15	with-prob	 1013/9495
+eyesNotFollowingTarget	performed-at	16	with-prob	 59/8070
+eyesNotFollowingTarget	performed-at	17	with-prob	 963/8732
+eyesNotFollowingTarget	performed-at	18	with-prob	 1/1000
+eyesNotFollowingTarget	performed-at	19	with-prob	 98/9595
+eyesNotFollowingTarget	performed-at	20	with-prob	 1/1000
+eyesNotFollowingTarget	performed-at	21	with-prob	 7068/7141
+eyesNotFollowingTarget	performed-at	22	with-prob	 5673/9463
+eyesNotFollowingTarget	performed-at	23	with-prob	 1137/3166
+eyesNotFollowingTarget	performed-at	24	with-prob	 869/2284
+eyesNotFollowingTarget	performed-at	25	with-prob	 2815/8034
+eyesNotFollowingTarget	performed-at	26	with-prob	 54/3893
+eyesNotFollowingTarget	performed-at	27	with-prob	 1/1000
+eyesNotFollowingTarget	performed-at	28	with-prob	 402/2321
+eyesNotFollowingTarget	performed-at	29	with-prob	 1/1000
+

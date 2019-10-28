@@ -39,3 +39,4 @@
 (alter-var-root #'domain-description #(assoc-in % [:pprops 1 :precondition] (fn [state] true)))
 (alter-var-root #'domain-language #(assoc % :actions (conj (:actions domain-language) :takesMedicine)))
 (alter-var-root #'domain-language #(assoc % :maxinst 4))
+
